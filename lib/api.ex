@@ -293,9 +293,11 @@ defmodule Intercom.API do
     n * (0.5 * (1 + :rand.uniform()))
   end
 
+  # https://developers.intercom.com/intercom-api-reference/reference#http-responses
   @spec retry_response?(http_success | http_failure) :: boolean
   # 409 conflict
   defp retry_response?({:ok, 409, _headers, _body}), do: true
+  defp retry_response?({:ok, 503, _headers, _body}), do: true
   # Destination refused the connection, the connection was reset, or a
   # variety of other connection failures. This could occur from a single
   # saturated server, so retry in case it's intermittent.
@@ -303,6 +305,8 @@ defmodule Intercom.API do
   # Retry on timeout-related problems (either on open or read).
   defp retry_response?({:error, :connect_timeout}), do: true
   defp retry_response?({:error, :timeout}), do: true
+  # Retry on Intercom service unavailable, which also has status 503
+  defp retry_response?({:error, :service_unavailable}), do: true
   defp retry_response?(_response), do: false
 
   @spec handle_response(http_success | http_failure) :: {:ok, map} | {:error, Intercom.Error.t()}

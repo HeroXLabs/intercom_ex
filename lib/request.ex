@@ -76,7 +76,7 @@ defmodule Intercom.Request do
   @doc """
   Executes the request and returns the response.
   """
-  @spec make_request(t) :: {:ok, Map.t()} | {:error, Intercom.Error.t()}
+  @spec make_request(t) :: {:ok, map} | {:error, Intercom.Error.t()}
   def make_request(
         %Request{params: params, endpoint: endpoint, method: method, headers: headers, opts: opts}
       ) do
