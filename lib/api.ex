@@ -198,9 +198,17 @@ defmodule Intercom.API do
     headers = add_idempotency_header(idempotency_key, headers, method)
 
     req_body =
-      body
-      |> Intercom.Util.map_keys_to_atoms()
-      |> Intercom.Util.encode_query()
+      case Map.get(headers, "Content-Type") do
+        "application/json" ->
+          body
+          |> json_library().encode!()
+        _ ->
+          body
+          |> Intercom.Util.map_keys_to_atoms()
+          |> Intercom.Util.encode_query()
+      end
+
+    Logger.debug "Intercom.API#perform_request \nheaders\n#{inspect headers}\nbody\n#{inspect req_body}\n"
 
     perform_request(req_url, method, req_body, headers, opts)
   end
