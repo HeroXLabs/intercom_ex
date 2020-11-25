@@ -310,6 +310,7 @@ defmodule Intercom.API do
   defp retry_response?({:ok, 409, _headers, _body}), do: true
   # 429 too many requests
   defp retry_response?({:ok, 429, _headers, _body}), do: true
+  defp retry_response?({:ok, 500, _headers, _body}), do: true
   defp retry_response?({:ok, 503, _headers, _body}), do: true
 
   # Destination refused the connection, the connection was reset, or a
